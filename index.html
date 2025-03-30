@@ -1,0 +1,847 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuestMarketer - Геймификация задач интернет-маркетинга</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <i class="bi bi-trophy-fill me-2"></i>QuestMarketer
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" @click="activePage = 'dashboard'">
+                                <i class="bi bi-speedometer2 me-1"></i>Дашборд
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" @click="activePage = 'quests'">
+                                <i class="bi bi-journal-text me-1"></i>Журнал квестов
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" @click="activePage = 'templates'">
+                                <i class="bi bi-grid-3x3-gap me-1"></i>Шаблоны
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" @click="activePage = 'analytics'">
+                                <i class="bi bi-graph-up me-1"></i>Аналитика
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center">
+                        <div class="anicoins me-3">
+                            <i class="bi bi-coin animation-pulse"></i>
+                            <span>{{ userCoins }}</span> Анимонет
+                        </div>
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none" 
+                           @click="activePage = 'profile'">
+                            <div class="user-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid mt-4">
+            <!-- Dashboard Page -->
+            <div v-if="activePage === 'dashboard'" class="dashboard-container">
+                <h2 class="page-title">Дашборд</h2>
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Текущие задачи</h5>
+                                <button class="btn btn-sm btn-primary" @click="openNewTaskModal">
+                                    <i class="bi bi-plus-lg"></i> Новая задача
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div v-if="currentTasks.length === 0" class="text-center py-4">
+                                    <i class="bi bi-clipboard2-check fs-1 text-muted"></i>
+                                    <p class="mt-2">У вас пока нет активных задач</p>
+                                    <button class="btn btn-primary" @click="openNewTaskModal">Создать задачу</button>
+                                </div>
+                                <ul v-else class="task-list">
+                                    <li v-for="task in currentTasks" :key="task.id" class="task-item">
+                                        <div class="task-header d-flex justify-content-between">
+                                            <h6 class="mb-0">{{ task.title }}</h6>
+                                            <span :class="'badge ' + getStatusBadgeClass(task.status)">
+                                                {{ getStatusText(task.status) }}
+                                            </span>
+                                        </div>
+                                        <div class="task-details">
+                                            <span class="task-type">{{ getTaskTypeName(task.type) }}</span>
+                                            <span class="task-deadline" :class="{'text-danger': isOverdue(task)}">
+                                                <i class="bi bi-clock"></i> {{ formatDate(task.deadline) }}
+                                            </span>
+                                        </div>
+                                        <div class="progress mt-2" style="height: 6px;">
+                                            <div class="progress-bar" :style="{width: task.progress + '%'}"
+                                                 :class="{'bg-warning': isOverdue(task)}"></div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">График продуктивности</h5>
+                            </div>
+                            <div class="card-body productivity-chart">
+                                <svg class="chart" viewBox="0 0 500 200" preserveAspectRatio="none">
+                                    <polyline fill="none" stroke="#4c56c9" stroke-width="2"
+                                             points="0,180 50,150 100,160 150,120 200,140 250,90 300,100 350,70 400,60 450,40 500,30"/>
+                                    <path fill="url(#gradient)" fill-opacity="0.2"
+                                         d="M0,180 50,150 100,160 150,120 200,140 250,90 300,100 350,70 400,60 450,40 500,30 500,200 0,200 Z"/>
+                                    <defs>
+                                        <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#4c56c9" stop-opacity="0.7"/>
+                                            <stop offset="100%" stop-color="#4c56c9" stop-opacity="0.1"/>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <div class="chart-labels">
+                                    <div>Пн</div>
+                                    <div>Вт</div>
+                                    <div>Ср</div>
+                                    <div>Чт</div>
+                                    <div>Пт</div>
+                                    <div>Сб</div>
+                                    <div>Вс</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Баланс Анимонет</h5>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="anicoin-balance">
+                                    <i class="bi bi-coin fs-1 mb-2"></i>
+                                    <h3>{{ userCoins }}</h3>
+                                    <p>Анимонет</p>
+                                </div>
+                                <div class="transactions mt-3">
+                                    <h6>Последние начисления</h6>
+                                    <div v-for="transaction in recentTransactions" :key="transaction.id" 
+                                         class="transaction-item d-flex justify-content-between align-items-center">
+                                        <div>{{ transaction.title }}</div>
+                                        <div :class="transaction.amount > 0 ? 'text-success' : 'text-danger'">
+                                            {{ transaction.amount > 0 ? '+' : '' }}{{ transaction.amount }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Достижения</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="achievements">
+                                    <div v-for="achievement in achievements" :key="achievement.id" 
+                                         class="achievement-item" :class="{'achievement-locked': !achievement.unlocked}">
+                                        <div class="achievement-icon">
+                                            <i :class="'bi bi-' + achievement.icon"></i>
+                                        </div>
+                                        <div class="achievement-info">
+                                            <h6 class="mb-0">{{ achievement.title }}</h6>
+                                            <p class="mb-0">{{ achievement.description }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quests Journal Page -->
+            <div v-if="activePage === 'quests'" class="quests-container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="page-title">Журнал квестов</h2>
+                    <button class="btn btn-primary" @click="openNewTaskModal">
+                        <i class="bi bi-plus-lg"></i> Новая задача
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="task-filters d-flex">
+                                <div class="dropdown me-2">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown">
+                                        Статус: {{ activeFilters.status || 'Все' }}
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" @click="setFilter('status', null)">Все</a></li>
+                                        <li><a class="dropdown-item" href="#" @click="setFilter('status', 'in-progress')">В процессе</a></li>
+                                        <li><a class="dropdown-item" href="#" @click="setFilter('status', 'completed')">Выполнено</a></li>
+                                        <li><a class="dropdown-item" href="#" @click="setFilter('status', 'overdue')">Просрочено</a></li>
+                                    </ul>
+                                </div>
+                                <div class="dropdown me-2">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown">
+                                        Тип: {{ activeFilters.type ? getTaskTypeName(activeFilters.type) : 'Все' }}
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" @click="setFilter('type', null)">Все</a></li>
+                                        <li v-for="type in taskTypes" :key="type.id">
+                                            <a class="dropdown-item" href="#" @click="setFilter('type', type.id)">
+                                                {{ type.name }}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="search-box">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Поиск задач..." 
+                                           v-model="searchQuery">
+                                    <button class="btn btn-outline-secondary" type="button">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div v-if="filteredTasks.length === 0" class="text-center py-5">
+                            <i class="bi bi-search fs-1 text-muted"></i>
+                            <p class="mt-2">Задачи не найдены</p>
+                        </div>
+                        <div v-else class="task-tree">
+                            <div v-for="task in filteredTasks" :key="task.id" class="task-node">
+                                <div class="task-node-header" @click="toggleTask(task)">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi" :class="task.expanded ? 'bi-caret-down-fill' : 'bi-caret-right-fill'"></i>
+                                        <div class="form-check ms-2">
+                                            <input class="form-check-input" type="checkbox" 
+                                                  :checked="task.status === 'completed'"
+                                                  @change="toggleTaskCompletion(task)">
+                                        </div>
+                                        <h6 class="mb-0 ms-2">{{ task.title }}</h6>
+                                        <span :class="'badge ms-2 ' + getStatusBadgeClass(task.status)">
+                                            {{ getStatusText(task.status) }}
+                                        </span>
+                                    </div>
+                                    <div class="task-deadline" :class="{'text-danger': isOverdue(task)}">
+                                        <i class="bi bi-clock"></i> {{ formatDate(task.deadline) }}
+                                    </div>
+                                </div>
+                                <div v-if="task.expanded" class="task-node-content">
+                                    <div class="task-details mb-3">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>Тип:</strong> {{ getTaskTypeName(task.type) }}</p>
+                                                <p><strong>Прогресс:</strong></p>
+                                                <div class="progress mb-3" style="height: 8px;">
+                                                    <div class="progress-bar" :style="{width: task.progress + '%'}"
+                                                         :class="{'bg-warning': isOverdue(task)}"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Награда:</strong> {{ calculateReward(task) }} Анимонет</p>
+                                                <p v-if="isOverdue(task)">
+                                                    <strong class="text-danger">Штраф за просрочку:</strong> 
+                                                    {{ calculatePenalty(task) }}%
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div v-if="task.subtasks && task.subtasks.length > 0">
+                                        <h6>Подзадачи:</h6>
+                                        <div class="subtasks-list">
+                                            <div v-for="subtask in task.subtasks" :key="subtask.id" 
+                                                 class="subtask-item d-flex align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" 
+                                                          :checked="subtask.completed"
+                                                          @change="toggleSubtaskCompletion(task, subtask)">
+                                                </div>
+                                                <span :class="{'text-decoration-line-through': subtask.completed}">
+                                                    {{ subtask.title }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="task-actions mt-3">
+                                        <button class="btn btn-sm btn-outline-primary me-2" 
+                                                @click="openEditTaskModal(task)">
+                                            <i class="bi bi-pencil"></i> Редактировать
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success me-2"
+                                                @click="openCompleteTaskModal(task)">
+                                            <i class="bi bi-check-lg"></i> Завершить
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary"
+                                                @click="saveAsTemplate(task)">
+                                            <i class="bi bi-bookmark-plus"></i> Сохранить как шаблон
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Templates Page -->
+            <div v-if="activePage === 'templates'" class="templates-container">
+                <h2 class="page-title">Шаблоны задач</h2>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Предустановленные шаблоны</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="template-list">
+                                    <div v-for="template in predefinedTemplates" :key="template.id" 
+                                         class="template-item">
+                                        <div class="template-header d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">{{ template.title }}</h6>
+                                            <button class="btn btn-sm btn-primary" @click="useTemplate(template)">
+                                                <i class="bi bi-plus-lg"></i> Использовать
+                                            </button>
+                                        </div>
+                                        <div class="template-details">
+                                            <p>{{ template.description }}</p>
+                                            <div v-if="template.subtasks && template.subtasks.length > 0">
+                                                <small class="text-muted">
+                                                    <i class="bi bi-list-check me-1"></i>
+                                                    {{ template.subtasks.length }} подзадач
+                                                </small>
+                                            </div>
+                                            <div class="template-type">
+                                                <span class="badge bg-light text-dark">
+                                                    {{ getTaskTypeName(template.type) }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Мои шаблоны</h5>
+                            </div>
+                            <div class="card-body">
+                                <div v-if="userTemplates.length === 0" class="text-center py-4">
+                                    <i class="bi bi-bookmark-plus fs-1 text-muted"></i>
+                                    <p class="mt-2">У вас пока нет сохраненных шаблонов</p>
+                                    <p class="text-muted">
+                                        Сохраняйте часто выполняемые задачи как шаблоны для быстрого создания новых задач
+                                    </p>
+                                </div>
+                                <div v-else class="template-list">
+                                    <div v-for="template in userTemplates" :key="template.id" 
+                                         class="template-item">
+                                        <div class="template-header d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">{{ template.title }}</h6>
+                                            <div>
+                                                <button class="btn btn-sm btn-primary me-2" @click="useTemplate(template)">
+                                                    <i class="bi bi-plus-lg"></i> Использовать
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" @click="deleteTemplate(template)">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="template-details">
+                                            <p>{{ template.description }}</p>
+                                            <div v-if="template.subtasks && template.subtasks.length > 0">
+                                                <small class="text-muted">
+                                                    <i class="bi bi-list-check me-1"></i>
+                                                    {{ template.subtasks.length }} подзадач
+                                                </small>
+                                            </div>
+                                            <div class="template-type">
+                                                <span class="badge bg-light text-dark">
+                                                    {{ getTaskTypeName(template.type) }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Типы задач и коэффициенты</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Тип задачи</th>
+                                        <th>Коэффициент</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="type in taskTypes" :key="type.id">
+                                        <td>{{ type.id }}</td>
+                                        <td>{{ type.name }}</td>
+                                        <td>{{ type.coefficient }}</td>
+                                        <td>{{ type.description }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div v-if="activePage === 'analytics'" class="analytics-container">
+                <h2 class="page-title">Аналитика времени</h2>
+                
+                <div class="row mb-4">
+                    <div class="col-md-7">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Распределение времени по типам задач</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="time-distribution-chart">
+                                    <svg viewBox="0 0 400 300">
+                                        <!-- Pie chart with colored segments -->
+                                        <g transform="translate(150, 150)">
+                                            <!-- Pie segments -->
+                                            <path d="M0,0 L0,-100 A100,100 0 0,1 70.7,-70.7 Z" fill="#4c56c9"></path>
+                                            <path d="M0,0 L70.7,-70.7 A100,100 0 0,1 100,0 Z" fill="#7178dd"></path>
+                                            <path d="M0,0 L100,0 A100,100 0 0,1 70.7,70.7 Z" fill="#9b9eed"></path>
+                                            <path d="M0,0 L70.7,70.7 A100,100 0 0,1 0,100 Z" fill="#c5c7f7"></path>
+                                            <path d="M0,0 L0,100 A100,100 0 0,1 -100,0 Z" fill="#e0e1fa"></path>
+                                            <path d="M0,0 L-100,0 A100,100 0 0,1 0,-100 Z" fill="#d0d2f3"></path>
+                                        </g>
+                                        
+                                        <!-- Legend -->
+                                        <g transform="translate(300, 80)">
+                                            <rect x="0" y="0" width="15" height="15" fill="#4c56c9"></rect>
+                                            <text x="20" y="12" font-size="12">Анализ (25%)</text>
+                                            
+                                            <rect x="0" y="25" width="15" height="15" fill="#7178dd"></rect>
+                                            <text x="20" y="37" font-size="12">Контент (20%)</text>
+                                            
+                                            <rect x="0" y="50" width="15" height="15" fill="#9b9eed"></rect>
+                                            <text x="20" y="62" font-size="12">Реклама (15%)</text>
+                                            
+                                            <rect x="0" y="75" width="15" height="15" fill="#c5c7f7"></rect>
+                                            <text x="20" y="87" font-size="12">SEO (15%)</text>
+                                            
+                                            <rect x="0" y="100" width="15" height="15" fill="#e0e1fa"></rect>
+                                            <text x="20" y="112" font-size="12">Обучение (15%)</text>
+                                            
+                                            <rect x="0" y="125" width="15" height="15" fill="#d0d2f3"></rect>
+                                            <text x="20" y="137" font-size="12">Другое (10%)</text>
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Ключевые метрики</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="time-metrics">
+                                    <div class="metric-item">
+                                        <div class="metric-icon">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                        </div>
+                                        <div class="metric-info">
+                                            <h6>Завершенные задачи</h6>
+                                            <p class="mb-0">{{ stats.completedTasks }} ({{ stats.completionRate }}%)</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="metric-item">
+                                        <div class="metric-icon">
+                                            <i class="bi bi-graph-up"></i>
+                                        </div>
+                                        <div class="metric-info">
+                                            <h6>Средняя точность оценки времени</h6>
+                                            <p class="mb-0">{{ stats.timeEstimateAccuracy }}%</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="metric-item">
+                                        <div class="metric-icon">
+                                            <i class="bi bi-clock-history"></i>
+                                        </div>
+                                        <div class="metric-info">
+                                            <h6>Среднее время выполнения</h6>
+                                            <p class="mb-0">{{ stats.avgCompletionTime }} минут</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="metric-item">
+                                        <div class="metric-icon">
+                                            <i class="bi bi-exclamation-triangle-fill"></i>
+                                        </div>
+                                        <div class="metric-info">
+                                            <h6>Просроченные задачи</h6>
+                                            <p class="mb-0">{{ stats.overdueTasks }} ({{ stats.overdueRate }}%)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Детализация по задачам</h5>
+                                <button class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-download"></i> Экспорт CSV
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Задача</th>
+                                                <th>Тип</th>
+                                                <th>Плановое время (мин)</th>
+                                                <th>Фактическое время (мин)</th>
+                                                <th>Расхождение</th>
+                                                <th>Дата выполнения</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="task in completedTasksWithTime" :key="task.id">
+                                                <td>{{ task.title }}</td>
+                                                <td>{{ getTaskTypeName(task.type) }}</td>
+                                                <td>{{ task.estimatedTime }}</td>
+                                                <td>{{ task.actualTime }}</td>
+                                                <td :class="getTimeVarianceClass(task)">
+                                                    {{ calculateTimeVariance(task) }}%
+                                                </td>
+                                                <td>{{ formatDate(task.completionDate) }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Рекомендации по оптимизации времени</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="time-recommendations">
+                                    <div v-for="(rec, index) in timeRecommendations" :key="index" class="recommendation-item">
+                                        <i class="bi bi-lightbulb-fill me-2"></i>
+                                        <div>{{ rec }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div v-if="activePage === 'profile'" class="profile-container">
+                <h2 class="page-title">Профиль пользователя</h2>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <div class="profile-avatar mb-3">
+                                    <i class="bi bi-person-circle"></i>
+                                </div>
+                                <h4>Иван Маркетолог</h4>
+                                <p class="text-muted">Интернет-маркетолог</p>
+                                <div class="mt-3">
+                                    <button class="btn btn-outline-primary">Редактировать профиль</button>
+                                </div>
+                                
+                                <div class="anicoins-profile mt-4">
+                                    <h5>Баланс Анимонет</h5>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <i class="bi bi-coin me-2"></i>
+                                        <h3>{{ userCoins }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-8">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Статистика</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="profile-stat-item">
+                                            <div class="profile-stat-value">{{ stats.completedTasks }}</div>
+                                            <div class="profile-stat-label">Завершенных задач</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="profile-stat-item">
+                                            <div class="profile-stat-value">{{ stats.overdueRate }}%</div>
+                                            <div class="profile-stat-label">Задач в срок</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="profile-stat-item">
+                                            <div class="profile-stat-value">{{ stats.totalEarnedCoins }}</div>
+                                            <div class="profile-stat-label">Всего Анимонет</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="profile-stat-item">
+                                            <div class="profile-stat-value">{{ Object.keys(userTemplates).length }}</div>
+                                            <div class="profile-stat-label">Сохраненных шаблонов</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Достижения</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="achievements-grid">
+                                    <div v-for="achievement in achievements" :key="achievement.id" 
+                                         class="achievement-box" :class="{'achievement-locked': !achievement.unlocked}">
+                                        <div class="achievement-box-icon">
+                                            <i :class="'bi bi-' + achievement.icon"></i>
+                                        </div>
+                                        <h6>{{ achievement.title }}</h6>
+                                        <p>{{ achievement.description }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">История Анимонет</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="coins-history">
+                                    <div v-for="transaction in coinHistory" :key="transaction.id" 
+                                         class="coins-history-item">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h6 class="mb-0">{{ transaction.title }}</h6>
+                                                <small class="text-muted">{{ formatDate(transaction.date) }}</small>
+                                            </div>
+                                            <div :class="transaction.amount > 0 ? 'text-success' : 'text-danger'">
+                                                {{ transaction.amount > 0 ? '+' : '' }}{{ transaction.amount }}
+                                            </div>
+                                        </div>
+                                        <div v-if="transaction.description" class="mt-1">
+                                            <small>{{ transaction.description }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Task Modal -->
+        <div class="modal fade" id="newTaskModal" tabindex="-1" data-bs-backdrop="static">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Создание новой задачи</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="taskTitle" class="form-label">Название задачи</label>
+                            <input type="text" class="form-control" id="taskTitle" v-model="newTask.title">
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskType" class="form-label">Тип задачи</label>
+                            <select class="form-select" id="taskType" v-model="newTask.type">
+                                <option v-for="type in taskTypes" :key="type.id" :value="type.id">
+                                    {{ type.name }} (коэф. {{ type.coefficient }})
+                                </option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskDeadline" class="form-label">Дедлайн</label>
+                            <input type="datetime-local" class="form-control" id="taskDeadline" v-model="newTask.deadline">
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskEstimatedTime" class="form-label">
+                                Планируемое время выполнения (минуты)
+                            </label>
+                            <input type="number" class="form-control" id="taskEstimatedTime" v-model="newTask.estimatedTime">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="splitSubtasks" v-model="newTask.splitToSubtasks">
+                                <label class="form-check-label" for="splitSubtasks">
+                                    Разбить задачу на подзадачи?
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div v-if="newTask.splitToSubtasks" class="subtasks-form">
+                            <h6>Подзадачи</h6>
+                            <div v-for="(subtask, index) in newTask.subtasks" :key="index" class="subtask-form-item mb-2">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Название подзадачи" 
+                                           v-model="subtask.title">
+                                    <button class="btn btn-outline-danger" type="button" @click="removeSubtask(index)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm mt-2" @click="addSubtask">
+                                <i class="bi bi-plus-lg"></i> Добавить подзадачу
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="button" class="btn btn-primary" @click="createTask">Создать</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complete Task Modal -->
+        <div class="modal fade" id="completeTaskModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Завершение задачи</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div v-if="currentTask">
+                            <h5>{{ currentTask.title }}</h5>
+                            <div class="mb-3">
+                                <label for="actualTime" class="form-label">
+                                    Фактическое время выполнения (минуты)
+                                </label>
+                                <input type="number" class="form-control" id="actualTime" v-model="completeTaskData.actualTime">
+                            </div>
+                            
+                            <div v-if="isOverdue(currentTask)" class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                Задача выполнена с опозданием! Штраф: {{ calculatePenalty(currentTask) }}%
+                            </div>
+                            
+                            <div class="reward-calculation mt-4">
+                                <h6>Расчет награды:</h6>
+                                <div class="d-flex justify-content-between">
+                                    <span>Базовая награда:</span>
+                                    <span>100 × {{ getTaskTypeCoefficient(currentTask.type) }} = {{ 100 * getTaskTypeCoefficient(currentTask.type) }}</span>
+                                </div>
+                                <div v-if="isOverdue(currentTask)" class="d-flex justify-content-between text-danger">
+                                    <span>Штраф за опоздание:</span>
+                                    <span>{{ calculatePenalty(currentTask) }}%</span>
+                                </div>
+                                <div class="d-flex justify-content-between fw-bold mt-2">
+                                    <span>Итоговая награда:</span>
+                                    <span>{{ calculateReward(currentTask) }} Анимонет</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="button" class="btn btn-success" @click="completeTask">
+                            Завершить и получить награду
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template Success Modal -->
+        <div class="modal fade" id="templateSuccessModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Шаблон сохранен</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <i class="bi bi-bookmark-check-fill text-success fs-1 mb-3"></i>
+                        <h5>Шаблон успешно сохранен!</h5>
+                        <p>Теперь вы можете использовать его для быстрого создания новых задач</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

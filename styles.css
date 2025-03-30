@@ -1,0 +1,550 @@
+:root {
+    --primary-color: #4c56c9;
+    --primary-light: #7178dd;
+    --secondary-color: #f9a825;
+    --success-color: #4caf50;
+    --danger-color: #f44336;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --card-border-radius: 8px;
+    --transition-speed: 0.3s;
+}
+
+body {
+    font-family: 'Segoe UI', -apple-system, system-ui, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif;
+    background-color: #f6f8fb;
+    color: #333;
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: var(--primary-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: white;
+}
+
+.anicoins {
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    color: white;
+    font-weight: 500;
+}
+
+.anicoins i {
+    color: var(--secondary-color);
+    margin-right: 6px;
+    font-size: 1.2rem;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+/* Card Styles */
+.card {
+    border: none;
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-shadow);
+    margin-bottom: 1.5rem;
+    transition: transform var(--transition-speed);
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 1rem 1.25rem;
+    font-weight: 500;
+}
+
+.page-title {
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    color: #2a2a2a;
+}
+
+/* Task List Styles */
+.task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.task-item {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: background-color var(--transition-speed);
+}
+
+.task-item:last-child {
+    border-bottom: none;
+}
+
+.task-item:hover {
+    background-color: rgba(0, 0, 0, 0.01);
+}
+
+.task-header {
+    margin-bottom: 0.5rem;
+}
+
+.task-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.task-type {
+    padding: 2px 8px;
+    background-color: rgba(76, 86, 201, 0.1);
+    border-radius: 4px;
+    color: var(--primary-color);
+}
+
+.task-deadline {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Productivity Chart */
+.productivity-chart {
+    height: 250px;
+    position: relative;
+}
+
+.chart {
+    width: 100%;
+    height: 200px;
+}
+
+.chart-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.75rem;
+    color: #6c757d;
+    padding: 0 10px;
+}
+
+/* Anicoin Balance Section */
+.anicoin-balance {
+    padding: 1.5rem 0;
+}
+
+.anicoin-balance i {
+    color: var(--secondary-color);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.transactions {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: 1rem;
+}
+
+.transaction-item {
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 0.875rem;
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+/* Achievements */
+.achievements {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.achievement-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    transition: transform var(--transition-speed);
+}
+
+.achievement-item:hover {
+    transform: translateX(5px);
+}
+
+.achievement-locked {
+    opacity: 0.5;
+}
+
+.achievement-icon {
+    width: 40px;
+    height: 40px;
+    background-color: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.achievement-info h6 {
+    margin-bottom: 0.2rem;
+    font-weight: 600;
+}
+
+.achievement-info p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* Quest Journal Styles */
+.task-filters {
+    gap: 0.5rem;
+}
+
+.task-tree {
+    margin-top: 1rem;
+}
+
+.task-node {
+    margin-bottom: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.task-node-header {
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+}
+
+.task-node-header:hover {
+    background-color: #e9ecef;
+}
+
+.task-node-content {
+    padding: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.subtasks-list {
+    margin-top: 0.5rem;
+    padding-left: 1.5rem;
+}
+
+.subtask-item {
+    margin-bottom: 0.5rem;
+}
+
+/* Templates Page Styles */
+.template-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.template-item {
+    padding: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform var(--transition-speed);
+}
+
+.template-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.template-header {
+    margin-bottom: 0.75rem;
+}
+
+.template-details {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.template-details p {
+    margin-bottom: 0.5rem;
+}
+
+.template-type {
+    margin-top: 0.5rem;
+}
+
+/* Analytics Page Styles */
+.time-distribution-chart {
+    height: 300px;
+}
+
+.time-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.metric-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.metric-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: rgba(76, 86, 201, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+.metric-info h6 {
+    margin-bottom: 0.2rem;
+    font-weight: 600;
+}
+
+.time-recommendations {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.recommendation-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    background-color: rgba(76, 86, 201, 0.05);
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.recommendation-item i {
+    color: var(--secondary-color);
+    font-size: 1.2rem;
+}
+
+/* Profile Page Styles */
+.profile-avatar {
+    font-size: 5rem;
+    color: var(--primary-color);
+}
+
+.anicoins-profile {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.profile-stat-item {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.profile-stat-value {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.profile-stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.achievement-box {
+    padding: 1rem;
+    text-align: center;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    transition: transform var(--transition-speed);
+}
+
+.achievement-box:hover {
+    transform: scale(1.05);
+}
+
+.achievement-box-icon {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+}
+
+.achievement-box h6 {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.achievement-box p {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.coins-history {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.coins-history-item {
+    padding: 0.75rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.coins-history-item:last-child {
+    border-bottom: none;
+}
+
+/* Status Badge Colors */
+.badge.status-in-progress {
+    background-color: var(--primary-light);
+    color: white;
+}
+
+.badge.status-completed {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.badge.status-overdue {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Animation utilities */
+.animation-pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .achievements-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .task-node-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .task-deadline {
+        margin-top: 0.5rem;
+    }
+}
+
+/* Form controls enhancements */
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 0.25rem rgba(76, 86, 201, 0.25);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #3941a0;
+    border-color: #3941a0;
+}
+
+/* Subtasks form */
+.subtasks-form {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.subtask-form-item {
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Time variance colors */
+.variance-good {
+    color: var(--success-color);
+}
+
+.variance-warning {
+    color: #ff9800;
+}
+
+.variance-bad {
+    color: var(--danger-color);
+}
+
+/* Add new styles to indicate local storage status */
+.storage-indicator {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 1000;
+}
+
+.storage-indicator.saved {
+    background-color: rgba(76, 175, 80, 0.6);
+}
+
+.storage-indicator.not-saved {
+    background-color: rgba(244, 67, 54, 0.6);
+}
